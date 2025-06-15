@@ -16,7 +16,7 @@ module "infrastructure" {
 
   # EC2 Configuration
   ec2_instance_type = "t3.micro"
-  ec2_ami_id        = "ami-0c55b159cbfafe1f0"  # Example AMI ID, replace with actual
+  ec2_ami_id  = "ami-00543daa0ad4d3ea4"  # Example AMI ID, replace with actual"  # Example AMI ID, replace with actual
 
   # S3 Configuration
   s3_bucket_name = "my-project-prod-bucket"

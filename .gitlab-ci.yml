@@ -1,0 +1,60 @@
+stages:
+  - validate
+  - plan
+  - apply
+
+variables:
+  TF_ROOT: ${CI_PROJECT_DIR}
+  TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_COMMIT_REF_NAME}
+
+cache:
+  key: "${TF_ROOT}"
+  paths:
+    - ${TF_ROOT}/.terraform
+
+before_script:
+  - cd ${TF_ROOT}
+  - terraform --version
+  - terraform init
+
+validate:
+  stage: validate
+  script:
+    - terraform fmt -check
+    - terraform validate
+    - |
+      # Check for security issues
+      if grep -r "0.0.0.0/0" environments/*/terraform.tfvars; then
+        echo "ERROR: Found open SSH access (0.0.0.0/0) in tfvars files"
+        exit 1
+      fi
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
+      when: never
+    - if: "$CI_COMMIT_BRANCH"
+
+plan:
+  stage: plan
+  script:
+    - cd environments/${CI_COMMIT_REF_NAME}
+    - terraform plan -out="planfile"
+  artifacts:
+    name: plan
+    paths:
+      - environments/${CI_COMMIT_REF_NAME}/planfile
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+apply:
+  stage: apply
+  script:
+    - cd environments/${CI_COMMIT_REF_NAME}
+    - terraform apply -input=false "planfile"
+  dependencies:
+    - plan
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+    - if: "$CI_COMMIT_BRANCH =~ /^(dev|staging)$/"
+      when: manual

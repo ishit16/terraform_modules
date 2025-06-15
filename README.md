@@ -1,53 +1,61 @@
-# AWS Infrastructure as Code
+# AWS Infrastructure Self-Service
 
-This repository contains Terraform configurations for deploying various AWS services including EC2, S3, ML services (Comprehend, SageMaker, QuickSight), and Bedrock.
+This repository provides self-service AWS infrastructure provisioning through GitLab CI/CD.
 
-## Prerequisites
+## 🚀 Quick Start (For Users)
 
-- Terraform >= 1.0.0
-- AWS CLI configured with appropriate credentials
-- Git
+### Step 1: Request Infrastructure
 
-## Usage
-
-1. Clone this repository
-2. Create a new branch for your changes
-3. Copy the example environment configuration:
+1. **Fork this repository** or create a new branch
+2. **Copy the template**:
    ```bash
-   cp environments/dev/terraform.tfvars.example environments/dev/terraform.tfvars
+   cp templates/terraform.tfvars.example environments/[your-env]/terraform.tfvars
    ```
-4. Edit the `terraform.tfvars` file with your specific values
-5. Initialize Terraform:
-   ```bash
-   terraform init
-   ```
-6. Plan your changes:
-   ```bash
-   terraform plan
-   ```
-7. Apply your changes:
-   ```bash
-   terraform apply
-   ```
+3. **Fill in your values** in the `terraform.tfvars` file (this is the ONLY file you need to modify)
+4. **Create a Merge Request**
 
-## Module Structure
+### Step 2: What You Need to Provide
 
-- `modules/ec2`: EC2 instance configuration
-- `modules/s3`: S3 bucket configuration
-- `modules/ml_services`: ML services configuration
-- `modules/bedrock`: Bedrock configuration
+- **Project name**: Unique identifier for your resources
+- **Environment**: dev, staging, or prod
+- **SSH key name**: Your SSH key in AWS (contact DevOps if you don't have one)
+- **Your public IP**: For secure SSH access
+- **S3 bucket name**: Must be globally unique
 
-## Contributing
+### Step 3: Get Your Resources
 
-1. Create a new branch for your changes
-2. Make your changes
-3. Submit a merge request
-4. Ensure all tests pass
-5. Get code review approval
-6. Merge your changes
+- Once your MR is approved and merged, resources will be automatically created
+- You'll receive the connection details in the pipeline output
 
-## Security
+## 💰 Cost Estimates
 
-- All resources are created with encryption enabled
-- IAM roles follow the principle of least privilege
-- Security groups are configured with minimal required access
+- **EC2 t3.micro**: ~£8/month (Free tier: 750 hours/month)
+- **S3 storage**: ~£0.02/GB/month (Free tier: 5GB)
+- **EBS storage**: ~£0.08/GB/month (Free tier: 30GB)
+
+## 🔒 Security Features
+
+- All resources encrypted by default
+- SSH access restricted to your IP only
+- Automatic security group configuration
+- IAM roles with minimal permissions
+
+## 📋 Available Services
+
+- ✅ EC2 instances (Amazon Linux 2023)
+- ✅ S3 buckets (with versioning and encryption)
+- ✅ ML services (Comprehend, SageMaker, QuickSight)
+- ✅ Amazon Bedrock
+
+## 🆘 Support
+
+- **Slack**: #devops-support
+- **Email**: devops@company.com
+- **Documentation**: [Internal Wiki Link]
+
+## 🚫 What NOT to Do
+
+- Don't modify any files except `terraform.tfvars`
+- Don't use `0.0.0.0/0` for SSH access
+- Don't hardcode sensitive values
+- Don't bypass the approval process

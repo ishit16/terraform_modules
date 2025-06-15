@@ -26,7 +26,7 @@ resource "aws_instance" "main" {
     {
       Name = "${var.name}-ec2"
     },
-    var.tags
+    
   )
 }
 

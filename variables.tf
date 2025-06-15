@@ -5,13 +5,23 @@ variable "aws_region" {
 }
 
 variable "environment" {
-  description = "Environment name (e.g., dev, prod)"
+  description = "Environment name"
   type        = string
+  
+  validation {
+    condition     = contains(["dev", "staging", "prod"], var.environment)
+    error_message = "Environment must be one of: dev, staging, prod."
+  }
 }
 
 variable "project_name" {
-  description = "Name of the project"
+  description = "Name of the project (lowercase, alphanumeric and hyphens only)"
   type        = string
+  
+  validation {
+    condition     = can(regex("^[a-z0-9-]+$", var.project_name))
+    error_message = "Project name must be lowercase alphanumeric characters and hyphens only."
+  }
 }
 
 variable "vpc_id" {
@@ -24,22 +34,11 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
-variable "ssh_cidr_blocks" {
-  description = "List of CIDR blocks allowed for SSH access"
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
-}
-
 # EC2 Variables
 variable "ec2_instance_type" {
   description = "EC2 instance type"
   type        = string
   default     = "t3.micro"
-}
-
-variable "ec2_ami_id" {
-  description = "AMI ID for EC2 instance"
-  type        = string
 }
 
 # S3 Variables
@@ -84,4 +83,37 @@ variable "enable_bedrock" {
   description = "Enable Amazon Bedrock"
   type        = bool
   default     = false
+}
+
+variable "ssh_key_name" {
+  description = "Name of the SSH key pair in AWS"
+  type        = string
+}
+
+variable "allowed_ssh_ips" {
+  description = "List of IP addresses allowed for SSH access (use your public IP)"
+  type        = list(string)
+  
+  validation {
+    condition = alltrue([
+      for ip in var.allowed_ssh_ips : can(cidrhost(ip, 0))
+    ])
+    error_message = "All SSH IPs must be valid CIDR blocks (e.g., 1.2.3.4/32)."
+  }
+}
+
+variable "owner_email" {
+  description = "Email of the resource owner"
+  type        = string
+  
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.owner_email))
+    error_message = "Owner email must be a valid email address."
+  }
+}
+
+variable "ec2_root_volume_size" {
+  description = "Size of the root volume in GB"
+  type        = number
+  default     = 30
 }

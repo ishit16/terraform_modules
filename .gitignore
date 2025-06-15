@@ -1,0 +1,77 @@
+# Terraform files
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terraform.lock.hcl
+
+# Exclude example tfvars files
+!terraform.tfvars.example
+
+# Local .terraform directories
+.terraform/
+
+# Terraform plan output
+plan.out
+*.plan
+
+# SSH Keys
+*.pem
+*.key
+id_rsa*
+id_ecdsa*
+id_ed25519*
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.bak
+*.sublime*
+.project
+.settings/
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+
+# Environment files
+.env
+.envrc
+.env.*
+
+# Python virtual environments (if using any Python scripts)
+venv/
+.venv/
+env/
+.env/
+__pycache__/
+*.py[cod]
+
+# Node modules (if using any Node.js scripts)
+node_modules/ 

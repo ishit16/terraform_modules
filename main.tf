@@ -1,24 +1,52 @@
+# Data source for automatic AMI selection
+data "aws_ami" "amazon_linux_2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+# Validation for required variables
+locals {
+  # Validate project name
+  validate_project_name = regex("^[a-z0-9-]+$", var.project_name)
+  
+  # Validate environment
+  validate_environment = contains(["dev", "staging", "prod"], var.environment)
+}
+
 module "ec2" {
   source = "./modules/ec2"
 
   name           = var.project_name
-  ami_id         = var.ec2_ami_id
+  ami_id         = data.aws_ami.amazon_linux_2023.id  # Auto-select latest AMI
   instance_type  = var.ec2_instance_type
   subnet_id      = var.subnet_ids[0]
   vpc_id         = var.vpc_id
-  ssh_cidr_blocks = var.ssh_cidr_blocks
+  ssh_cidr_blocks = var.allowed_ssh_ips  # Use specific IPs, not 0.0.0.0/0
+  key_name       = var.ssh_key_name      # Add SSH key
 
-  # Add these optional parameters with default values
-  root_volume_size = 8
-  associate_public_ip_address = true
-  enable_detailed_monitoring = false
-  ebs_optimized = false
-  source_dest_check = true
-  disable_api_termination = false
-  instance_initiated_shutdown_behavior = "stop"
+  root_volume_size = var.ec2_root_volume_size
+  associate_public_ip_address = var.environment == "dev" ? true : false
+  
   tags = {
     Environment = var.environment
     Project     = var.project_name
+    ManagedBy   = "Terraform"
+    Owner       = var.owner_email
   }
 }
 

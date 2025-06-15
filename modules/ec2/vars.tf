@@ -118,3 +118,4 @@ variable "instance_initiated_shutdown_behavior" {
     error_message = "The instance_initiated_shutdown_behavior value must be either 'stop' or 'terminate'."
   }
 } 
+
