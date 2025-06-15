@@ -1,22 +1,36 @@
-# Basic Configuration
-environment = "dev"
-project_name = "my-project"
+# =============================================================================
+# AWS INFRASTRUCTURE REQUEST TEMPLATE
+# =============================================================================
+# Instructions: Copy this file to environments/[your-env]/terraform.tfvars
+# and fill in your specific values. Only modify the values, not the structure.
+# =============================================================================
 
-# EC2 Configuration
-ec2_instance_type = "t3.micro"
-ec2_ami_id        = "ami-0c55b159cbfafe1f0"  # Example AMI ID, replace with actual
+# Basic Configuration (REQUIRED)
+environment = "dev"                    # Options: dev, staging, prod
+project_name = "my-project-is-great"           # Your project name (lowercase, no spaces)
+owner_email = "ishitgarg1231@gmail.com" # Your email address
 
-# S3 Configuration
-s3_bucket_name = "my-first-project-dev-bucket-ig16-june"
+# EC2 Configuration (REQUIRED)
+ec2_instance_type = "t3.micro"        # Options: t3.micro, t3.small, t3.medium
+ec2_root_volume_size = 30             # Minimum 30GB required
 
-# ML Services Configuration
+# S3 Configuration (REQUIRED)
+s3_bucket_name = "my-unique-bucket-name-2024-ig16"  # Must be globally unique
+
+# SSH Access (REQUIRED)
+ssh_key_name = "terraform-project"           # Your SSH key name in AWS
+allowed_ssh_ips = ["49.207.215.145/32"]     # Your IP address for SSH access
+
+# Network Configuration (REQUIRED - Contact DevOps team for values)
+vpc_id     = "vpc-0b2e99e9d17729d99"          # Get from DevOps team
+subnet_ids = ["subnet-0f55444463b70f646", "subnet-04484caf2061ee9c2"]     # Get from DevOps team
+
+# Optional Services (Set to true to enable)
 enable_comprehend = false
 enable_sagemaker  = false
 enable_quicksight = false
+enable_bedrock    = false
 
-# Bedrock Configuration
-enable_bedrock = false
-
-# Network Configuration
-vpc_id     = "vpc-0b2e99e9d17729d99"  # Replace with actual VPC ID
-subnet_ids = ["subnet-0f55444463b70f646", "subnet-04484caf2061ee9c2"]  # Replace with actual subnet IDs 
+# Optional: ML Services Configuration (only needed if enabled above)
+comprehend_data_uri = ""              # S3 URI for Comprehend data
+quicksight_admin_email = ""           # Admin email for QuickSight 
